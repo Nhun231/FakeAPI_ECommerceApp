@@ -1,4 +1,4 @@
-import React, { createContext, useState, useMemo } from 'react';
+import React, { createContext, useState, useMemo, useContext } from 'react';
 
 // Create CartContext
 export const CartContext = createContext();
@@ -42,6 +42,9 @@ export const CartProvider = ({ children }) => {
     setCart(prev => prev.map(item => item.id === id ? { ...item, quantity: Math.max(1, quantity) } : item));
   };
 
+  // Clear the cart
+  const clearCart = () => setCart([]);
+
   // Calculate total price
   const total = useMemo(() => cart.reduce((sum, item) => sum + item.price * item.quantity, 0), [cart]);
 
@@ -56,6 +59,7 @@ export const CartProvider = ({ children }) => {
     updateQuantity,
     total,
     itemCount,
+    clearCart,
   };
 
   return (
@@ -63,4 +67,40 @@ export const CartProvider = ({ children }) => {
       {children}
     </CartContext.Provider>
   );
+};
+
+// Delivery Info Context
+export const DeliveryInfoContext = createContext();
+
+export const DeliveryInfoProvider = ({ children }) => {
+  const [deliveryInfo, setDeliveryInfo] = useState({
+    name: '',
+    phone: '',
+    address: '',
+    coordinates: null,
+  });
+
+  const updateDeliveryInfo = (info) => {
+    setDeliveryInfo(prev => ({ ...prev, ...info }));
+  };
+
+  const clearDeliveryInfo = () => setDeliveryInfo({ name: '', phone: '', address: '', coordinates: null });
+
+  const value = useMemo(() => ({
+    deliveryInfo,
+    updateDeliveryInfo,
+    clearDeliveryInfo,
+  }), [deliveryInfo]);
+
+  return (
+    <DeliveryInfoContext.Provider value={value}>
+      {children}
+    </DeliveryInfoContext.Provider>
+  );
+};
+
+export const useDeliveryInfo = () => {
+  const context = useContext(DeliveryInfoContext);
+  if (!context) throw new Error('useDeliveryInfo must be used within a DeliveryInfoProvider');
+  return context;
 }; 

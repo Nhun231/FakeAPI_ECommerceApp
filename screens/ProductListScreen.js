@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import ProductCard from '../components/ProductCard'; 
 import { useNavigation } from '@react-navigation/native';
 import { useCart } from '../hooks/useCart';
+import { useWishlist } from '../hooks/useWishlist';
 
 const PAGE_SIZE = 20;
 const PAGE_SIZE_OPTIONS = [10, 15, 20];
@@ -34,6 +35,7 @@ const ProductListScreen = () => {
   const catScrollRef = useRef(); // Ref for the ScrollView in the category modal
   const navigation = useNavigation();
   const { itemCount } = useCart();
+  const { wishlist } = useWishlist();
   const fetchingRef = useRef(false); // Prevent overlapping fetches
 
   // Add both heart and cart icons to header, remove screen title
@@ -44,6 +46,11 @@ const ProductListScreen = () => {
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity style={styles.headerHeartBtn} onPress={() => navigation.navigate('Wishlist')}>
             <Text style={styles.headerHeartIcon}>❤</Text>
+            {wishlist.length > 0 && (
+              <View style={styles.headerHeartBadge}>
+                <Text style={styles.headerHeartBadgeText}>{wishlist.length}</Text>
+              </View>
+            )}
           </TouchableOpacity>
           <TouchableOpacity style={styles.headerCartBtn} onPress={() => navigation.navigate('Cart')}>
             <Text style={styles.headerCartIcon}>🛒</Text>
@@ -56,7 +63,7 @@ const ProductListScreen = () => {
         </View>
       ),
     });
-  }, [navigation, itemCount]);
+  }, [navigation, itemCount, wishlist.length]);
 
   // Fetch categories on mount
   useEffect(() => {
@@ -576,6 +583,25 @@ const styles = StyleSheet.create({
   headerHeartIcon: {
     fontSize: 22,
     color: '#ff3b30',
+  },
+  headerHeartBadge: {
+    position: 'absolute',
+    top: -4,
+    right: -4,
+    backgroundColor: '#ff3b30',
+    borderRadius: 10,
+    minWidth: 18,
+    height: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 4,
+    borderWidth: 2,
+    borderColor: '#fff',
+  },
+  headerHeartBadgeText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 12,
   },
   row: {
     justifyContent: 'space-around',

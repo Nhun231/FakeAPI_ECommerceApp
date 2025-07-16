@@ -1,13 +1,13 @@
 import React from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useWishlist } from '../hooks/useWishlist'; // To be created
+import { useWishlist } from '../hooks/useWishlist';
 import { useCart } from '../hooks/useCart';
 import ProductCard from '../components/ProductCard';
 
 const WishlistScreen = () => {
   const navigation = useNavigation();
-  const { wishlist, removeFromWishlist } = useWishlist();
+  const { wishlist, removeFromWishlist, clearWishlist } = useWishlist();
   const { addToCart } = useCart();
 
   // Render each favorite product
@@ -30,6 +30,12 @@ const WishlistScreen = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Wishlist</Text>
+      {/* Clear Wishlist button */}
+      {wishlist.length > 0 && (
+        <TouchableOpacity style={styles.clearBtn} onPress={clearWishlist}>
+          <Text style={styles.clearBtnText}>Clear Wishlist</Text>
+        </TouchableOpacity>
+      )}
       <FlatList
         data={wishlist}
         keyExtractor={item => item.id.toString()}
@@ -49,6 +55,8 @@ const styles = StyleSheet.create({
   actions: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 },
   actionBtn: { backgroundColor: '#007bff', borderRadius: 8, paddingVertical: 8, paddingHorizontal: 16, marginRight: 8 },
   actionBtnText: { color: '#fff', fontWeight: 'bold' },
+  clearBtn: { backgroundColor: '#ff3b30', borderRadius: 8, paddingVertical: 8, paddingHorizontal: 16, alignSelf: 'flex-end', marginBottom: 10 },
+  clearBtnText: { color: '#fff', fontWeight: 'bold' },
 });
 
 export default WishlistScreen; 

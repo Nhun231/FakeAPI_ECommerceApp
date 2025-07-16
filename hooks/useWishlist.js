@@ -16,8 +16,11 @@ export const WishlistProvider = ({ children }) => {
     setWishlist(prev => prev.filter(item => item.id !== id));
   };
 
+  // Clear the wishlist
+  const clearWishlist = () => setWishlist([]);
+
   // Memoize value
-  const value = useMemo(() => ({ wishlist, addToWishlist, removeFromWishlist }), [wishlist]);
+  const value = useMemo(() => ({ wishlist, addToWishlist, removeFromWishlist, clearWishlist }), [wishlist]);
 
   return <WishlistContext.Provider value={value}>{children}</WishlistContext.Provider>;
 };
